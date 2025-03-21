@@ -17,8 +17,8 @@ from country_list import countries_for_language
 
 from helpers import apology, login_required, login_required_partner, resizer, lookup, usd
 
-# Configure application
-application = Flask(__name__)
+# Configure app
+app = Flask(__name__)
 
 
 # ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -27,11 +27,11 @@ application = Flask(__name__)
 
 
 # Ensure templates are auto-reloaded
-application.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
 # Ensure responses aren't cached
-@application.after_request
+@app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
@@ -40,20 +40,20 @@ def after_request(response):
 
 
 # Debug setting
-application.config['ENV'] = 'development'
-application.config['DEBUG'] = True
-application.config['TESTING'] = True
+app.config['ENV'] = 'development'
+app.config['DEBUG'] = True
+app.config['TESTING'] = True
 
 # Configure session to use filesystem (instead of signed cookies)
-application.config["SESSION_FILE_DIR"] = mkdtemp()
-application.config["SESSION_PERMANENT"] = False
-application.config["SESSION_TYPE"] = "filesystem"
-Session(application)
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 
 # Stripe Configurations
-# application.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51JEeRjSAwK0gy0a7ppnQt6BQUVoSj4Jh3YS37hSLJ8XbgzBSLosQbgsRhGLbeB9J2SA8QQiwGbdpuKglLvZnU1Nt00wzjNZEAu'
-# application.config['STRIPE_SECRET_KEY'] = 'sk_test_51JEeRjSAwK0gy0a7OnSgXr0Wq8LkEVdDzY3T4B1Caoc6W0U2f8sOnvBuYy9RaaYgCuEPihFKYE0SBogeAEAb8trE00ODPVquDJ'
+# app.config['STRIPE_PUBLIC_KEY'] = 'pk_test_51JEeRjSAwK0gy0a7ppnQt6BQUVoSj4Jh3YS37hSLJ8XbgzBSLosQbgsRhGLbeB9J2SA8QQiwGbdpuKglLvZnU1Nt00wzjNZEAu'
+# app.config['STRIPE_SECRET_KEY'] = 'sk_test_51JEeRjSAwK0gy0a7OnSgXr0Wq8LkEVdDzY3T4B1Caoc6W0U2f8sOnvBuYy9RaaYgCuEPihFKYE0SBogeAEAb8trE00ODPVquDJ'
 
 
 # Configure CS50 Library to use SQLite database
@@ -61,7 +61,7 @@ db = SQL("sqlite:///home.db")
 
 
 # home page
-@application.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     titlee = {'n': 'index'}
     details = db.execute("SELECT * FROM locations")
@@ -77,7 +77,7 @@ def index():
 
 
 # Shows you the homes of a particular city to explore
-@application.route("/explore", methods=["GET", "POST"])
+@app.route("/explore", methods=["GET", "POST"])
 def explore():
     if request.method == "POST":
         city = request.form.get("city")
@@ -154,7 +154,7 @@ def explore():
 
 
 # Shows your customized search results
-@application.route("/results", methods=["GET", "POST"])
+@app.route("/results", methods=["GET", "POST"])
 def results():
     if request.method == "POST":
         city = request.form.get("city")
@@ -215,7 +215,7 @@ def results():
 
 
 # Shows you your selected homes
-@application.route("/homes", methods=["GET", "POST"])
+@app.route("/homes", methods=["GET", "POST"])
 def homes():
     if request.method == "POST":
         name = request.form.get("name")
@@ -287,7 +287,7 @@ def homes():
 
 
 # Shows you your selected homes
-@application.route("/homes_preview", methods=["GET", "POST"])
+@app.route("/homes_preview", methods=["GET", "POST"])
 @login_required_partner
 def homes_preview():
     if request.method == "POST":
@@ -338,7 +338,7 @@ def homes_preview():
                                    titlee=titlee, current_date=current_date, features=features, nearby=nearby, bhk_details=bhk_details, audios=audios)
 
 
-@application.route("/homes_users_preview", methods=["GET", "POST"])
+@app.route("/homes_users_preview", methods=["GET", "POST"])
 @login_required
 def homes_users_preview():
     if request.method == "POST":
@@ -379,7 +379,7 @@ def homes_users_preview():
 # Sign Up for Partners
 
 
-@application.route("/signUpPartner", methods=["GET", "POST"])
+@app.route("/signUpPartner", methods=["GET", "POST"])
 def signUpPartner():
 
     if request.method == "POST":
@@ -442,7 +442,7 @@ def signUpPartner():
 
 
 # Sign Up for Users
-@application.route("/signupUsers", methods=["GET", "POST"])
+@app.route("/signupUsers", methods=["GET", "POST"])
 def signupUsers():
     """sign users up"""
 
@@ -489,7 +489,7 @@ def signupUsers():
 
 
 # Sign Up for Users then redirect for payment
-@application.route("/signupUsers_payment", methods=["GET", "POST"])
+@app.route("/signupUsers_payment", methods=["GET", "POST"])
 def signupUsers_payment():
     """sign users up"""
 
@@ -615,7 +615,7 @@ def signupUsers_payment():
 
 
 # partner validation
-@application.route("/loginPartner", methods=["GET", "POST"])
+@app.route("/loginPartner", methods=["GET", "POST"])
 def loginPartner():
     if request.method == "POST":
         """Log partner in"""
@@ -647,7 +647,7 @@ def loginPartner():
 
 
 # partner validation
-@application.route("/loginUser", methods=["GET", "POST"])
+@app.route("/loginUser", methods=["GET", "POST"])
 def loginUser():
     if request.method == "POST":
         """Log Users in"""
@@ -676,7 +676,7 @@ def loginUser():
 
 
 # partner logout
-@application.route("/logOut_Partner", methods=["GET", "POST"])
+@app.route("/logOut_Partner", methods=["GET", "POST"])
 def logOut_Partner():
     # Forget any partner_id
     session.clear()
@@ -684,7 +684,7 @@ def logOut_Partner():
 
 
 # user logout
-@application.route("/logOut_User", methods=["GET", "POST"])
+@app.route("/logOut_User", methods=["GET", "POST"])
 def logOut_User():
     # Forget any user_id
     session.clear()
@@ -692,7 +692,7 @@ def logOut_User():
 
 
 # user profile
-@application.route("/user_profile", methods=["GET", "POST"])
+@app.route("/user_profile", methods=["GET", "POST"])
 @login_required
 def user_profile():
     titlee = {'n': 'profile'}
@@ -726,7 +726,7 @@ def user_profile():
 
 
 # Partner dashboard
-@application.route("/partner_dashboard", methods=["GET", "POST"])
+@app.route("/partner_dashboard", methods=["GET", "POST"])
 @login_required_partner
 def partner_dashboard():
     partner_details = db.execute(
@@ -784,7 +784,7 @@ def partner_dashboard():
 
 
 # Locality suggestion route
-@application.route("/searchLocality", methods=["GET", "POST"])
+@app.route("/searchLocality", methods=["GET", "POST"])
 def searchLocality():
     recievedData = request.args.get('q')
     # cityLower = city.lower()
@@ -805,7 +805,7 @@ def searchLocality():
     return jsonify(locality)
 
 
-@application.route("/localities", methods=["GET", "POST"])
+@app.route("/localities", methods=["GET", "POST"])
 def localities():
     recievedData = request.args.get('q')
     print('$$---CITY---$$:')
@@ -818,7 +818,7 @@ def localities():
 
 
 # Sign Up for Partners
-@application.route("/add_property", methods=["GET", "POST"])
+@app.route("/add_property", methods=["GET", "POST"])
 @login_required_partner
 def add_property():
     if request.method == "POST":
@@ -1160,7 +1160,7 @@ def add_property():
     return render_template("add_property_form.html")
 
 
-@application.route("/purchase_process", methods=["GET", "POST"])
+@app.route("/purchase_process", methods=["GET", "POST"])
 def purchase_process():
     if request.method == "POST":
         countries = dict(countries_for_language('en'))
@@ -1255,7 +1255,7 @@ def purchase_process():
                                    sessionID=session.get("user_id"))
 
 
-@application.route("/payment_page", methods=["GET", "POST"])
+@app.route("/payment_page", methods=["GET", "POST"])
 def payment_page():
 
     if request.method == 'POST':
@@ -1372,7 +1372,7 @@ def payment_page():
         return render_template('payment.html', countries=countries, price=price, h_type=h_type, h_id=h_id, h_name=h_name)
 
 
-@application.route("/payment_page_survey", methods=["GET", "POST"])
+@app.route("/payment_page_survey", methods=["GET", "POST"])
 def payment_page_survey():
     if request.method == "POST":
         countries = dict(countries_for_language('en'))
@@ -1419,7 +1419,7 @@ def payment_page_survey():
             return redirect('/partner_dashboard')
 
 
-@application.route("/payment", methods=["GET", "POST"])
+@app.route("/payment", methods=["GET", "POST"])
 def payment():
     if request.method == 'POST':
         card_number = request.form.get('card_num')
@@ -1462,7 +1462,7 @@ def payment():
         return render_template('thanks.html')
 
 
-@application.route("/footer")
+@app.route("/footer")
 def footer():
     titlee = {'n': 'about me'}
     if session.get("user_id") or isinstance(session.get("user_id"), float):
@@ -1473,7 +1473,7 @@ def footer():
         return render_template('about_me.html', titlee=titlee)
 
 
-@application.route("/contact")
+@app.route("/contact")
 def contact():
     titlee = {'n': 'about me'}
     if session.get("user_id") or isinstance(session.get("user_id"), float):
@@ -1484,7 +1484,7 @@ def contact():
         return render_template('contact.html', titlee=titlee)
 
 
-@application.route("/about_project")
+@app.route("/about_project")
 def about_project():
     titlee = {'n': 'about project'}
     if session.get("user_id") or isinstance(session.get("user_id"), float):
@@ -1495,7 +1495,7 @@ def about_project():
         return render_template('about_project.html', titlee=titlee)
 
 
-@application.route("/price_checker")
+@app.route("/price_checker")
 def price_checker():
     query = request.args.get('q')
     splitQ = query.split('$')
@@ -1521,7 +1521,7 @@ def price_checker():
     return jsonify(price[0][type])
 
 
-@application.route("/settings_users", methods=["GET", "POST"])
+@app.route("/settings_users", methods=["GET", "POST"])
 @login_required
 def settings_users():
     if request.method == "POST":
@@ -1537,7 +1537,7 @@ def settings_users():
                 return render_template('settings_users.html', user_details=user_details, settings='password')
 
 
-@application.route("/settings_partners", methods=["GET", "POST"])
+@app.route("/settings_partners", methods=["GET", "POST"])
 @login_required_partner
 def settings_partners():
     if request.method == "POST":
@@ -1553,7 +1553,7 @@ def settings_partners():
                 return render_template('settings_partners.html', user_details=user_details, settings='password')
 
 
-@application.route("/validate_user_settings", methods=["GET", "POST"])
+@app.route("/validate_user_settings", methods=["GET", "POST"])
 @login_required
 def validate_user_settings():
     if request.method == "POST":
@@ -1615,7 +1615,7 @@ def validate_user_settings():
                 return jsonify('Done')
 
 
-@application.route("/validate_partner_settings", methods=["GET", "POST"])
+@app.route("/validate_partner_settings", methods=["GET", "POST"])
 @login_required_partner
 def validate_partner_settings():
     if request.method == "POST":
@@ -1677,7 +1677,7 @@ def validate_partner_settings():
                 return jsonify('Done')
 
 
-@application.route("/change_user_pwd", methods=["GET", "POST"])
+@app.route("/change_user_pwd", methods=["GET", "POST"])
 def change_user_pwd():
     if request.method == 'POST':
         user_id = request.form.get('user_id')
@@ -1701,7 +1701,7 @@ def change_user_pwd():
     return render_template('change_password_users.html')
 
 
-@application.route("/change_partner_pwd", methods=["GET", "POST"])
+@app.route("/change_partner_pwd", methods=["GET", "POST"])
 def change_partner_pwd():
     if request.method == 'POST':
         partner_id = request.form.get('partner_id')
@@ -1726,4 +1726,4 @@ def change_partner_pwd():
 
 
 if __name__ == '__main__':
-    application.run(debug=False, use_debugger=True, use_reloader=True)
+    app.run(debug=False, use_debugger=True, use_reloader=True)
